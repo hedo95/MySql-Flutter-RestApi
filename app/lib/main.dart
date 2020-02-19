@@ -47,8 +47,9 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.dark,
                 primarySwatch: Colors.orange,
                 accentColor: Colors.orange,
+                primaryColor: Colors.orange
               ),
-              home: Login(),//MyHomePage(),
+              home: Login(),
             ),
           );
         }
