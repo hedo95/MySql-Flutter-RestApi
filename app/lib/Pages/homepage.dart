@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/Pages/newcustomer.dart';
 import 'package:frontend/models/customer.dart';
 import 'package:frontend/models/http.dart';
+import 'package:frontend/BO/BO.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Customer> customers = [];
   Http http = new Http();
+  int index;
 
   @override
   initState() {
@@ -21,7 +23,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildList(BuildContext context) {
-    customers = Provider.of<List<Customer>>(context);
+    if (customers.isEmpty) {
+      customers = Provider.of<List<Customer>>(context);
+    }
     return ListView.builder(
         itemCount: customers.length,
         itemBuilder: (BuildContext context, index) {
@@ -31,8 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Icon(Icons.contacts),
               backgroundColor: Colors.white,
             ),
-            title:
-                Text('${customers[index].name} ${customers[index].lastname}'),
+            title: Text('${customers[index].username}'),
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
@@ -43,16 +46,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: RaisedButton(
                         child: Text('Update'),
                         onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Newcustomer(
-                                    customer: customers[index],
-                                  ))).then((customer) {
-                                    http.makeCustomerPutRequest(customer);
-                                    setState(() {
-                                      customers.removeAt(index);
-                                      customers.insert(index, customer);
-                                    });
-                                  });
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(
+                                  builder: (context) => Newcustomer(
+                                        customer: customers[index],
+                                      )))
+                              .then((customer) {
+                            http.makeCustomerPutRequest(customer);
+                            setState(() {
+                              customers.removeAt(index);
+                              customers.add(customer);
+                            });
+                          });
                         },
                       ),
                     ),
@@ -60,10 +65,32 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: RaisedButton(
                         child: Text('Delete'),
                         onPressed: () {
-                          http.makeCustomerDeleteRequest(customers[index]);
-                          setState(() {
-                            customers.removeAt(index);
-                          });
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: new Text('Notification'),
+                                  content: new Text(
+                                      'Are you sure want to delete ${customers[index].username} ?'),
+                                  actions: <Widget>[
+                                    new FlatButton(
+                                        onPressed: () {
+                                          http.makeCustomerDeleteRequest(
+                                              customers[index]);
+                                          setState(() {
+                                            customers.removeAt(index);
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: new Text('Delete')),
+                                    new FlatButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: new Text('Back'))
+                                  ],
+                                );
+                              });
                         },
                       ),
                     ),
@@ -91,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
               .push(MaterialPageRoute(builder: (context) => Newcustomer()))
               .then((customer) {
             if (customer != null) {
+              // New customer
               if (customer.id == null) {
                 int id = customers[customers.length - 1].id + 1;
                 http.makeCustomerPostRequest(customer);
@@ -99,12 +127,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   customers.add(customer);
                 });
               } else {
+                // Update customer
                 http.makeCustomerPutRequest(customer);
                 int index =
                     customers.indexWhere((item) => item.id == customer.id);
                 customers.removeAt(index);
                 customers.insert(index, customer);
-                print('${customers[index].password.length}');
+                print('${customers[index].hash.length}');
               }
             }
           });

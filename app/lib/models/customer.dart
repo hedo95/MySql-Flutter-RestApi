@@ -4,25 +4,24 @@ import 'package:password/password.dart';
 
 class Customer {
   int id;
-  String username, name, lastname, mail, password;
+  String username, name, lastname, mail, hash;
   PBKDF2 algorithm;
 
   Customer(this.username, this.name, this.lastname, this.mail, String password, {this.id}){
     algorithm = new PBKDF2();
-    this.password = Password.hash(password, algorithm);
+    this.hash = Password.hash(password, algorithm);
   } 
   Customer.def(){
-    id = null;
+    id = -1;
     username = '';
     name = '';
     lastname = '';
     mail = '';
-    password = '';
+    hash = '';
   }
 
-  bool passwordVerify(String password){
-    String hash = Password.hash(password, algorithm);
-    return Password.verify(hash, this.password);
+  passwordVerify(String password){
+    return Password.verify(password,hash);
   }
 
   toJson(){
@@ -34,7 +33,7 @@ class Customer {
     json.putIfAbsent('name', () => name);
     json.putIfAbsent('lastname', () => lastname);
     json.putIfAbsent('mail', () => mail);
-    json.putIfAbsent('password', () => password);
+    json.putIfAbsent('password', () => hash);
     return json;
   }
 

@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: http.getCustomers(),
+    return StreamBuilder(
+      stream: Stream.fromFuture(http.getCustomers()),
       builder: (context, response) {
         if(!response.hasData){
           return Center(
@@ -47,9 +47,8 @@ class MyApp extends StatelessWidget {
                 brightness: Brightness.dark,
                 primarySwatch: Colors.orange,
                 accentColor: Colors.orange,
-                primaryColor: Colors.orange
               ),
-              home: Login(),
+              home: MyHomePage(),
             ),
           );
         }

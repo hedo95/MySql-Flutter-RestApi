@@ -19,6 +19,25 @@ class _LoginState extends State<Login> {
   bool hidePassword = true;
   Http http = new Http();
 
+  void openDialog(BuildContext context, String dialogContent) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: new Text('Invalid data'),
+            content:
+                new Text(dialogContent),
+            actions: <Widget>[
+              new FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: new Text('Back'))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Customer> customers = Provider.of<List<Customer>>(context);
@@ -94,26 +113,14 @@ class _LoginState extends State<Login> {
                               (item) => item.username == nameController.text);
                           if (customer
                               .passwordVerify(passwordController.text)) {
+                            // Login App: openDialog(context, 'You're in! App gets started here with the current user')    
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => MyHomePage()));
+                          } else {
+                            openDialog(context, 'Invalid password');
                           }
                         } else {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: new Text('Invalid data'),
-                                  content: new Text(
-                                      'Make sure your password and username are correct'),
-                                  actions: <Widget>[
-                                    new FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: new Text('Back'))
-                                  ],
-                                );
-                              });
+                          openDialog(context, 'Make sure your username and password are correct');
                         }
                         print(nameController.text);
                         print(passwordController.text);

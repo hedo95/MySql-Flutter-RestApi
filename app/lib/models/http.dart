@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'customer.dart';
 
-class Http{
+class Http {
   // localhost || 10.0.2.2 (mysql) || 192.168.1.165 (home) || 10.192.82.178 (eduroam) || 10.10.10.47 (PIA despscho Juanjo) 
   final url = 'http://localhost:4000/';
   final customers = 'customers/';
@@ -47,4 +47,5 @@ class Http{
     print(
         'Estado de respuesta ${response.statusCode} => ${getstatusCode(response.statusCode)}');
   }
+  
 }

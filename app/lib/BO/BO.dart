@@ -1,5 +1,12 @@
 import 'package:frontend/models/customer.dart';
+import 'package:flutter/material.dart';
 
+/// BO == Business Objects
+/// Here we got functions, widgets or whatever we want to help
+
+
+// getstatusCode() is a function that give us info about http response
+// we give it the status code and returns its meaning 
 String getstatusCode(int statusCode) {
   String result;
   String ri = 'Respuesta informativa:';
@@ -194,4 +201,54 @@ String getstatusCode(int statusCode) {
     } break;
   }
   return 'Estatus $statusCode => $result';
+}
+
+bool isNullOrEmpty(String string){
+  if(string.isEmpty || string == '' || string == null){
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void openInfoDialog(
+    BuildContext context, String dialogTitle, String dialogContent) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: new Text(dialogTitle),
+          content: new Text(dialogContent),
+          actions: <Widget>[
+            new FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: new Text('Back'))
+          ],
+        );
+      });
+}
+
+void openActionDialog(
+    BuildContext context, String dialogTitle, String dialogContent, String actionButtonText, Function actionOnPressed, {int index, List<Customer> customers}) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: new Text(dialogTitle),
+          content: new Text(dialogContent),
+          actions: <Widget>[
+            new FlatButton(
+              onPressed: actionOnPressed, 
+              child: new Text(actionButtonText)
+            ),
+            new FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: new Text('Back'))
+          ],
+        );
+      });
 }
