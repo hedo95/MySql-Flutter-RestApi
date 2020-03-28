@@ -23,7 +23,6 @@ class Http {
     return result;
   }
 
-
   makeCustomerDeleteRequest(Customer customer) async {
     http.Response response = await http.delete('$url$customers${customer.id}', headers: headers);
     print(response.body);

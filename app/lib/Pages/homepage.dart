@@ -22,13 +22,39 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  updateonPressed(int index) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => Newcustomer(
+                  customer: customers[index],
+                )))
+        .then((customer) {
+      http.makeCustomerPutRequest(customer);
+      setState(() {
+        customers.removeAt(index);
+        customers.add(customer);
+      });
+    });
+  }
+
+  alertonPressed(int index) {
+    http.makeCustomerDeleteRequest(customers[index]);
+    setState(() {
+      customers.removeAt(index);
+    });
+    Navigator.of(context).pop();
+  }
+
+  deleteonPressed(BuildContext context, int index) {
+    openActionDialog(context, 'Alert', 'Are you sure want to delete ${customers[index].username} ?', 
+    'Delete', () => alertonPressed(index));
+  }
+
   Widget _buildList(BuildContext context) {
-    if (customers.isEmpty) {
-      customers = Provider.of<List<Customer>>(context);
-    }
     return ListView.builder(
         itemCount: customers.length,
-        itemBuilder: (BuildContext context, index) {
+        itemBuilder: (context, index) {
+          customers.sort((a, b) => a.id.compareTo(b.id));
           return ExpansionTile(
             leading: CircleAvatar(
               radius: 20.0,
@@ -42,58 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    InkWell(
-                      child: RaisedButton(
-                        child: Text('Update'),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(
-                                  builder: (context) => Newcustomer(
-                                        customer: customers[index],
-                                      )))
-                              .then((customer) {
-                            http.makeCustomerPutRequest(customer);
-                            setState(() {
-                              customers.removeAt(index);
-                              customers.add(customer);
-                            });
-                          });
-                        },
-                      ),
-                    ),
-                    InkWell(
-                      child: RaisedButton(
-                        child: Text('Delete'),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: new Text('Notification'),
-                                  content: new Text(
-                                      'Are you sure want to delete ${customers[index].username} ?'),
-                                  actions: <Widget>[
-                                    new FlatButton(
-                                        onPressed: () {
-                                          http.makeCustomerDeleteRequest(
-                                              customers[index]);
-                                          setState(() {
-                                            customers.removeAt(index);
-                                          });
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: new Text('Delete')),
-                                    new FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: new Text('Back'))
-                                  ],
-                                );
-                              });
-                        },
-                      ),
-                    ),
+                    raisedButton('Update', onPressed: () => updateonPressed(index)),
+                    raisedButton('Delete', onPressed: () => deleteonPressed(context,index)),
                   ],
                 ),
               ),
@@ -104,6 +80,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (customers.isEmpty) {
+      setState(() {
+        customers = Provider.of<List<Customer>>(context);
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Mysql + NodeJS Rest Api'),
@@ -117,12 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => Newcustomer()))
               .then((customer) {
-            if (customer != null) {
+            if (!isDefault(customer as Customer)) {
               // New customer
-              if (customer.id == null) {
-                int id = customers[customers.length - 1].id + 1;
+              if (customer.id == -1) {
+                customer = asignid(customers, customer as Customer);
                 http.makeCustomerPostRequest(customer);
-                customer.id = id;
                 setState(() {
                   customers.add(customer);
                 });
@@ -138,7 +118,6 @@ class _MyHomePageState extends State<MyHomePage> {
             }
           });
         },
-        tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
     );

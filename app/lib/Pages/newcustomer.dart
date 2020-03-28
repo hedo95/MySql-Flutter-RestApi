@@ -24,13 +24,6 @@ class _NewcustomerState extends State<Newcustomer> {
   bool validate4 = true;
   bool validate5 = true;
 
-  isDefault(Customer customer) {
-    if (customer != null && customer.id == -1) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 
   @override
   void initState() {
@@ -120,7 +113,7 @@ class _NewcustomerState extends State<Newcustomer> {
                   validate4 == true &&
                   validate5 == true) {
                 widget.customer =
-                    new Customer(username, name, lastname, mail, password);
+                    new Customer(username, name, lastname, mail, password, id: widget.customer.id);
                 Navigator.of(context).pop(widget.customer);
               }
             },
@@ -159,6 +152,10 @@ class _NewcustomerState extends State<Newcustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+          leading: IconButton(icon: Icon(Icons.arrow_left, size: 40,), onPressed: () {
+            Navigator.of(context).pop(widget.customer);
+          },),
           title: isDefault(widget.customer)
               ? new Text('New customer')
               : new Text('Update customer'),

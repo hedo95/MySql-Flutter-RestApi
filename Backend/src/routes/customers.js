@@ -17,7 +17,20 @@ router.get('/:customers', (req, res) => {
     });
 });
 
-// This function allows us concatenate 'id' to url => localhost:4000/id
+// This function allow us get id through its username
+// router.get('/:customers/:username', (req,res) => {
+//     const { username } = req.params;
+//     mysqlConnection.query("select * from customer where username = ?",[username], (error,rows,fields)=>{
+//         if(!error){
+//             res.json(rows);
+//             console.log(rows);
+//         } else {
+//             console.log(error);
+//         }
+//     })
+// })
+
+//This function allows us concatenate 'id' to url => localhost:4000/id
 router.get('/:customers/:id', (req, res) => {
     const { id } = req.params;
     mysqlConnection.query('select * from customer where id = ?', [id], (error, rows, fields) => {
@@ -30,13 +43,11 @@ router.get('/:customers/:id', (req, res) => {
 });
 
 router.post('/:customers', (req, res) => {
-    const { username, name, lastname, mail, password } = req.body;
+    const { id, username, name, lastname, mail, password } = req.body;
     console.log(req.body);
-    mysqlConnection.query('insert into customer(username, name, lastname, mail, password) values (?, ?, ?, ?, ?)', [ username, name, lastname, mail, password], (error, rows, fields) => {
+    mysqlConnection.query('insert into customer(id, username, name, lastname, mail, password) values (?, ?, ?, ?, ?, ?)', [ id, username, name, lastname, mail, password], (error, rows, fields) => {
         if(!error) {
-            res.json({
-                Status: 'Customer saved'
-            });
+            res.json({Status : "Customer saved"})
         } else {
             console.log(error);
         }
