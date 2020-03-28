@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:frontend/models/customer.dart';
 import 'package:flutter/material.dart';
 
@@ -383,14 +381,45 @@ String getstatusCode(int statusCode) {
   return 'Estatus $statusCode => $result';
 }
 
-asignid(List<Customer> items, Customer item){
-  if(items == null || items.isEmpty){
+asignid(List<Customer> items, Customer item) {
+  if (items == null || items.isEmpty) {
     item.id = 1;
   } else {
-    items.sort((b,a) => a.id.compareTo(b.id));
+    items.sort((b, a) => a.id.compareTo(b.id));
     item.id = items[0].id + 1;
   }
   return item;
+}
+
+Widget textfield(String labeltext, TextEditingController controller,
+    {bool obscureText, bool validate, bool outlineBorder = false}) {
+  InputDecoration inputDecoration;
+  if (validate != null && outlineBorder == false) {
+    inputDecoration = InputDecoration(
+      labelText: labeltext,
+      errorText: validate ? null : 'Field can\'t be empty',
+    );
+  } else if (validate != null && outlineBorder == true) {
+    inputDecoration = InputDecoration(
+      labelText: labeltext,
+      border: OutlineInputBorder(),
+      errorText: validate ? null : 'Field can\'t be empty',
+    );
+  } else if (validate == null && outlineBorder == false) {
+    inputDecoration = InputDecoration(
+      labelText: labeltext,
+    );
+  } else {
+    inputDecoration = InputDecoration(
+      labelText: labeltext,
+      border: OutlineInputBorder(),
+    );
+  }
+  return TextField(
+    obscureText: obscureText,
+    decoration: inputDecoration,
+    controller: controller,
+  );
 }
 
 bool isNullOrEmpty(String string) {
@@ -401,19 +430,30 @@ bool isNullOrEmpty(String string) {
   }
 }
 
- bool isDefault(Customer customer) {
-    if (customer == null || (customer.id == -1 && customer.username == '')) {
-      return true;
-    } else {
-      return false;
-    }
+bool isDefault(Customer customer) {
+  if (customer == null || (customer.id == -1 && customer.username == '')) {
+    return true;
+  } else {
+    return false;
   }
+}
 
-Widget raisedButton(String buttonText, {Function onPressed}) {
-  if(onPressed == null){
+Widget raisedButton(String buttonText, {Function onPressed, double fontSize = 12.0, double height, double width}) {
+  if (onPressed == null) {
     onPressed = () {};
   }
-  return InkWell(child: RaisedButton(child: Text(buttonText), onPressed: onPressed));
+  return Container(
+    height: height,
+    width: width,
+      child: InkWell(
+        child: RaisedButton(
+            textColor: Colors.white,
+            child: Text(
+              buttonText,
+              style: TextStyle(fontSize: 18),
+            ),
+            onPressed: onPressed),
+      ));
 }
 
 void openInfoDialog(
@@ -445,8 +485,7 @@ void openActionDialog(BuildContext context, String dialogTitle,
           content: new Text(dialogContent),
           actions: <Widget>[
             new FlatButton(
-                onPressed: actionOnPressed, 
-                child: new Text(actionButtonText)),
+                onPressed: actionOnPressed, child: new Text(actionButtonText)),
             new FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();

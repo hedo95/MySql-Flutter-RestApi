@@ -18,12 +18,14 @@ class _NewcustomerState extends State<Newcustomer> {
   TextEditingController _controller3;
   TextEditingController _controller4;
   TextEditingController _controller5;
-  bool validate1 = true;
-  bool validate2 = true;
-  bool validate3 = true;
-  bool validate4 = true;
-  bool validate5 = true;
-
+  bool validate1;
+  bool validate2;
+  bool validate3;
+  bool validate4;
+  bool validate5;
+  double spaceBetweenTextfields;
+  double spaceWithButton;
+  bool outlineBorder;
 
   @override
   void initState() {
@@ -38,6 +40,14 @@ class _NewcustomerState extends State<Newcustomer> {
     _controller4.text = widget.customer.mail;
     _controller5 = TextEditingController();
     _controller5.text = widget.customer.hash;
+    validate1 = true;
+    validate2 = true;
+    validate3 = true;
+    validate4 = true;
+    validate5 = true;
+    spaceBetweenTextfields = 10.0;
+    spaceWithButton = 30.0;
+    outlineBorder = false;
     super.initState();
   }
 
@@ -51,80 +61,31 @@ class _NewcustomerState extends State<Newcustomer> {
     super.dispose();
   }
 
-  Widget textfield(
-      String labeltext, TextEditingController controller,
-      {bool obscureText, bool validate, bool outlineBorder = false}) {
-    InputDecoration inputDecoration;
-    if (validate != null && outlineBorder == false) {
-      inputDecoration = InputDecoration(
-        labelText: labeltext,
-        errorText: validate ? null : 'Field can\'t be empty',
-      );
-    } else if (validate != null && outlineBorder == true) {
-      inputDecoration = InputDecoration(
-        labelText: labeltext,
-        border: OutlineInputBorder(),
-        errorText: validate ? null : 'Field can\'t be empty',
-      );
-    } else if (validate == null && outlineBorder == false) {
-      inputDecoration = InputDecoration(
-        labelText: labeltext,
-      );
-    } else {
-      inputDecoration = InputDecoration(
-        labelText: labeltext,
-        border: OutlineInputBorder(),
-      );
-    }
-    return TextField(
-      obscureText: obscureText,
-      decoration: inputDecoration,
-      controller: controller,
-    );
-  }
-
-  Widget button(String buttonText) {
-    {
-      return Container(
-          height: 50,
-          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: RaisedButton(
-            textColor: Colors.white,
-            child: Text(
-              buttonText,
-              style: TextStyle(fontSize: 18),
-            ),
-            onPressed: () {
-              String username = _controller1.text;
-              String name = _controller2.text;
-              String lastname = _controller3.text;
-              String mail = _controller4.text;
-              String password = _controller5.text;
-              setState(() {
-                isNullOrEmpty(username) ? validate1 = false : validate1 = true;
-                isNullOrEmpty(name) ? validate2 = false : validate2 = true;
-                isNullOrEmpty(lastname) ? validate3 = false : validate3 = true;
-                isNullOrEmpty(mail) ? validate4 = false : validate4 = true;
-                isNullOrEmpty(password) ? validate5 = false : validate5 = true;
-              });
-              if (validate1 == true &&
-                  validate2 == true &&
-                  validate3 == true &&
-                  validate4 == true &&
-                  validate5 == true) {
-                widget.customer =
-                    new Customer(username, name, lastname, mail, password, id: widget.customer.id);
-                Navigator.of(context).pop(widget.customer);
-              }
-            },
-          ));
+  onPressed() {
+    String username = _controller1.text;
+    String name = _controller2.text;
+    String lastname = _controller3.text;
+    String mail = _controller4.text;
+    String password = _controller5.text;
+    setState(() {
+      isNullOrEmpty(username) ? validate1 = false : validate1 = true;
+      isNullOrEmpty(name) ? validate2 = false : validate2 = true;
+      isNullOrEmpty(lastname) ? validate3 = false : validate3 = true;
+      isNullOrEmpty(mail) ? validate4 = false : validate4 = true;
+      isNullOrEmpty(password) ? validate5 = false : validate5 = true;
+    });
+    if (validate1 == true &&
+        validate2 == true &&
+        validate3 == true &&
+        validate4 == true &&
+        validate5 == true) {
+      widget.customer = new Customer(username, name, lastname, mail, password,
+          id: widget.customer.id);
+      Navigator.of(context).pop(widget.customer);
     }
   }
 
   Widget _inputData(BuildContext context) {
-    double height = 10.0;
-    double height2 = 30.0;
-    bool outlineBorder = false;
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: Column(
@@ -132,17 +93,34 @@ class _NewcustomerState extends State<Newcustomer> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          textfield('User name', _controller1, obscureText: false, validate: validate1, outlineBorder: outlineBorder),
-          SizedBox(height: height),
-          textfield('Name', _controller2, obscureText: false, validate: validate2, outlineBorder: outlineBorder),
-          SizedBox(height: height),
-          textfield('Last name', _controller3, obscureText: false, validate: validate3, outlineBorder: outlineBorder),
-          SizedBox(height: height),
-          textfield('Mail', _controller4, obscureText: false, validate: validate4, outlineBorder: outlineBorder),
-          SizedBox(height: height),
-          textfield('Password', _controller5, obscureText: true, validate: validate5, outlineBorder: outlineBorder),
-          SizedBox(height: height2),
-          isDefault(widget.customer) ? button('Insert') : button('Update'),
+          textfield('User name', _controller1,
+              obscureText: false,
+              validate: validate1,
+              outlineBorder: outlineBorder),
+          SizedBox(height: spaceBetweenTextfields),
+          textfield('Name', _controller2,
+              obscureText: false,
+              validate: validate2,
+              outlineBorder: outlineBorder),
+          SizedBox(height: spaceBetweenTextfields),
+          textfield('Last name', _controller3,
+              obscureText: false,
+              validate: validate3,
+              outlineBorder: outlineBorder),
+          SizedBox(height: spaceBetweenTextfields),
+          textfield('Mail', _controller4,
+              obscureText: false,
+              validate: validate4,
+              outlineBorder: outlineBorder),
+          SizedBox(height: spaceBetweenTextfields),
+          textfield('Password', _controller5,
+              obscureText: true,
+              validate: validate5,
+              outlineBorder: outlineBorder),
+          SizedBox(height: spaceWithButton),
+          isDefault(widget.customer)
+              ? raisedButton('Insert', fontSize: 18.0, onPressed: onPressed, height: 50.0)
+              : raisedButton('Update', fontSize: 18.0, onPressed: onPressed, height: 50.0),
         ],
       ),
     );
@@ -152,10 +130,6 @@ class _NewcustomerState extends State<Newcustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          leading: IconButton(icon: Icon(Icons.arrow_left, size: 40,), onPressed: () {
-            Navigator.of(context).pop(widget.customer);
-          },),
           title: isDefault(widget.customer)
               ? new Text('New customer')
               : new Text('Update customer'),
