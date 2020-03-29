@@ -25,6 +25,8 @@ dependencies:
   http: any
   password: any
   provider: any
+  encrypt: any
+  random_string: ^2.0.1
 
 dev_dependencies:
   flutter_test:

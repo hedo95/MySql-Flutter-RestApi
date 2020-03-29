@@ -9,7 +9,7 @@ app.set('port', process.env.PORT || 4000);
 app.use(express.json());
 
 // Routes
-app.use(require('./routes/customers'));
+app.use(require('./routes/user'));
 
 // Starting the server
 app.listen(app.get('port'), () => {

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/BO/BO.dart';
-import 'package:frontend/models/customer.dart';
+import 'package:frontend/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-class Newcustomer extends StatefulWidget {
-  Customer customer;
-  Newcustomer({this.customer});
+class Newuser extends StatefulWidget {
+  User user;
+  Newuser({this.user});
   @override
-  _NewcustomerState createState() => _NewcustomerState();
+  _NewuserState createState() => _NewuserState();
 }
 
-class _NewcustomerState extends State<Newcustomer> {
+class _NewuserState extends State<Newuser> {
   TextEditingController _controller1;
   TextEditingController _controller2;
   TextEditingController _controller3;
@@ -29,17 +29,17 @@ class _NewcustomerState extends State<Newcustomer> {
 
   @override
   void initState() {
-    if (widget.customer == null) widget.customer = new Customer.def();
+    if (widget.user == null) widget.user = new User.def();
     _controller1 = TextEditingController();
-    _controller1.text = widget.customer.username;
+    _controller1.text = widget.user.username;
     _controller2 = TextEditingController();
-    _controller2.text = widget.customer.name;
+    _controller2.text = widget.user.name;
     _controller3 = TextEditingController();
-    _controller3.text = widget.customer.lastname;
+    _controller3.text = widget.user.lastname;
     _controller4 = TextEditingController();
-    _controller4.text = widget.customer.mail;
+    _controller4.text = widget.user.mail;
     _controller5 = TextEditingController();
-    _controller5.text = widget.customer.hash;
+    _controller5.text = widget.user.hashBase64;
     validate1 = true;
     validate2 = true;
     validate3 = true;
@@ -79,9 +79,15 @@ class _NewcustomerState extends State<Newcustomer> {
         validate3 == true &&
         validate4 == true &&
         validate5 == true) {
-      widget.customer = new Customer(username, name, lastname, mail, password,
-          id: widget.customer.id);
-      Navigator.of(context).pop(widget.customer);
+          setState(() {
+            widget.user.username = username;
+            widget.user.name = name;
+            widget.user.lastname = lastname;
+            widget.user.mail = mail;
+            widget.user.hash = password;
+          });
+      
+      Navigator.of(context).pop(widget.user);
     }
   }
 
@@ -118,7 +124,7 @@ class _NewcustomerState extends State<Newcustomer> {
               validate: validate5,
               outlineBorder: outlineBorder),
           SizedBox(height: spaceWithButton),
-          isDefault(widget.customer)
+          isDefault(widget.user)
               ? raisedButton('Insert', fontSize: 18.0, onPressed: onPressed, height: 50.0)
               : raisedButton('Update', fontSize: 18.0, onPressed: onPressed, height: 50.0),
         ],
@@ -130,9 +136,9 @@ class _NewcustomerState extends State<Newcustomer> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: isDefault(widget.customer)
-              ? new Text('New customer')
-              : new Text('Update customer'),
+          title: isDefault(widget.user)
+              ? new Text('New user')
+              : new Text('Update user'),
         ),
         body: Center(child: _inputData(context)));
   }

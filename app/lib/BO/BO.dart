@@ -1,4 +1,4 @@
-import 'package:frontend/models/customer.dart';
+import 'package:frontend/models/user.dart';
 import 'package:flutter/material.dart';
 
 /// BO == Business Objects
@@ -381,9 +381,9 @@ String getstatusCode(int statusCode) {
   return 'Estatus $statusCode => $result';
 }
 
-asignid(List<Customer> items, Customer item) {
+asignid(List<User> items, User item) {
   if (items == null || items.isEmpty) {
-    item.id = 1;
+    item.id = -1;
   } else {
     items.sort((b, a) => a.id.compareTo(b.id));
     item.id = items[0].id + 1;
@@ -430,8 +430,8 @@ bool isNullOrEmpty(String string) {
   }
 }
 
-bool isDefault(Customer customer) {
-  if (customer == null || (customer.id == -1 && customer.username == '')) {
+bool isDefault(User user) {
+  if (user == null || (user.id == -1 && user.username == '')) {
     return true;
   } else {
     return false;
@@ -450,29 +450,10 @@ Widget raisedButton(String buttonText, {Function onPressed, double fontSize = 12
             textColor: Colors.white,
             child: Text(
               buttonText,
-              style: TextStyle(fontSize: 18),
+              style: TextStyle(fontSize: fontSize),
             ),
             onPressed: onPressed),
       ));
-}
-
-void openInfoDialog(
-    BuildContext context, String dialogTitle, String dialogContent) {
-  showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: new Text(dialogTitle),
-          content: new Text(dialogContent),
-          actions: <Widget>[
-            new FlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: new Text('Back'))
-          ],
-        );
-      });
 }
 
 void openActionDialog(BuildContext context, String dialogTitle,

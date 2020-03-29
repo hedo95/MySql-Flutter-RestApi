@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Pages/newcustomer.dart';
-import 'package:frontend/models/customer.dart';
+import 'package:frontend/Pages/newuser.dart';
+import 'package:frontend/models/user.dart';
 import 'package:frontend/models/http.dart';
 import 'package:frontend/BO/BO.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:provider/provider.dart';
+import 'package:encrypt/encrypt.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage();
@@ -13,63 +14,112 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Customer> customers = [];
+  List<User> users = [];
   Http http = new Http();
   int index;
+  Color leadingBackgroundColor;
+  Color leadingNumberColor;
 
   @override
   initState() {
     super.initState();
   }
 
+  onExpansionChanged(bool expanded) {
+    if (expanded==true){
+      setState(() {
+        leadingBackgroundColor = Colors.orange;
+        leadingNumberColor = Colors.white;
+      });
+    } else {
+      setState(() {
+        leadingBackgroundColor = Colors.white;
+        leadingNumberColor = Colors.black;
+      });
+    }
+  }
   updateonPressed(int index) {
     Navigator.of(context)
         .push(MaterialPageRoute(
-            builder: (context) => Newcustomer(
-                  customer: customers[index],
+            builder: (context) => Newuser(
+                  user: users[index],
                 )))
-        .then((customer) {
-      http.makeCustomerPutRequest(customer);
-      setState(() {
-        customers.removeAt(index);
-        customers.add(customer);
-      });
+        .then((user) {
+      if (user != null) {
+        http.makeUserPutRequest(user);
+        setState(() {
+          users.removeAt(index);
+          users.add(user);
+        });
+      }
     });
   }
 
   alertonPressed(int index) {
-    http.makeCustomerDeleteRequest(customers[index]);
+    http.makeUserDeleteRequest(users[index]);
     setState(() {
-      customers.removeAt(index);
+      users.removeAt(index);
     });
     Navigator.of(context).pop();
   }
 
   deleteonPressed(BuildContext context, int index) {
-    openActionDialog(context, 'Alert', 'Are you sure want to delete ${customers[index].username} ?', 
-    'Delete', () => alertonPressed(index));
+    openActionDialog(
+        context,
+        'Alert',
+        'Are you sure want to delete ${users[index].username} ?',
+        'Delete',
+        () => alertonPressed(index));
+  }
+
+  floatingonPressed() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => Newuser()))
+        .then((user) {
+      if (!isDefault(user as User)) {
+        // New user
+        if (user.id == -1) {
+          user = asignid(users, user as User);
+          http.makeUserPostRequest(user);
+          setState(() {
+            users.add(user);
+          });
+        } else {
+          // Update user
+          http.makeUserPutRequest(user);
+          int index = users.indexWhere((item) => item.id == user.id);
+          users.removeAt(index);
+          users.insert(index, user);
+        }
+      }
+    });
   }
 
   Widget _buildList(BuildContext context) {
     return ListView.builder(
-        itemCount: customers.length,
+        itemCount: users.length,
         itemBuilder: (context, index) {
-          customers.sort((a, b) => a.id.compareTo(b.id));
+          users.sort((a, b) => a.id.compareTo(b.id));
           return ExpansionTile(
             leading: CircleAvatar(
               radius: 20.0,
-              child: Icon(Icons.contacts),
-              backgroundColor: Colors.white,
+              backgroundColor: leadingBackgroundColor,
+              child: Text('${users[index].id}',style: TextStyle(fontSize: 20.0, color: leadingNumberColor),),
             ),
-            title: Text('${customers[index].username}'),
+            onExpansionChanged: (boo) => onExpansionChanged(boo),
+            title: Text('${users[index].username}'),
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(bottom: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    raisedButton('Update', onPressed: () => updateonPressed(index)),
-                    raisedButton('Delete', onPressed: () => deleteonPressed(context,index)),
+                    raisedButton('Update',
+                        onPressed: () => updateonPressed(index),
+                        fontSize: 15.0),
+                    raisedButton('Delete',
+                        onPressed: () => deleteonPressed(context, index),
+                        fontSize: 15.0),
                   ],
                 ),
               ),
@@ -80,9 +130,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (customers.isEmpty) {
+    if (users.isEmpty) {
       setState(() {
-        customers = Provider.of<List<Customer>>(context);
+        users = Provider.of<List<User>>(context);
       });
     }
     return Scaffold(
@@ -94,30 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Padding(
               padding: const EdgeInsets.all(8.0), child: _buildList(context))),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => Newcustomer()))
-              .then((customer) {
-            if (!isDefault(customer as Customer)) {
-              // New customer
-              if (customer.id == -1) {
-                customer = asignid(customers, customer as Customer);
-                http.makeCustomerPostRequest(customer);
-                setState(() {
-                  customers.add(customer);
-                });
-              } else {
-                // Update customer
-                http.makeCustomerPutRequest(customer);
-                int index =
-                    customers.indexWhere((item) => item.id == customer.id);
-                customers.removeAt(index);
-                customers.insert(index, customer);
-                print('${customers[index].hash.length}');
-              }
-            }
-          });
-        },
+        onPressed: floatingonPressed,
         child: Icon(Icons.add),
       ),
     );
