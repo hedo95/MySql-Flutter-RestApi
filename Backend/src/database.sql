@@ -2,6 +2,8 @@
 -- create database company;
 -- use company;
 
+
+
 -- create table customer (
 -- 	id int(11) not null auto_increment,
 -- 	username varchar(15) not null,
@@ -46,3 +48,24 @@
 -- insert into customer values(0001, 'root', 'Stan', 'Smith', 'stan.smith@gmail.com','Acngj-rjhjg-skfj34-54nsdf');
 
 -- select * from customer;
+
+
+
+
+
+
+
+-- drop database if exists company;
+-- create database company;
+-- use company;
+
+-- create table user (
+-- 	id int not null,
+--     username varchar(15) not null,
+--     name varchar(20) not null,
+--     lastname varchar(20) not null,
+--     mail varchar(50) not null,
+--     randomstr varchar(250) not null,
+--     hash varchar(250) not null,
+--     primary key(id)
+-- );

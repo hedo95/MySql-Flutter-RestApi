@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/Pages/homepage.dart';
-import 'package:frontend/Pages/newcustomer.dart';
-import 'package:frontend/models/customer.dart';
+import 'package:frontend/Pages/newuser.dart';
+import 'package:frontend/models/user.dart';
 import 'package:frontend/models/http.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -40,7 +40,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    List<Customer> customers = Provider.of<List<Customer>>(context);
+    List<User> users = Provider.of<List<User>>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text('Login'),
@@ -107,11 +107,11 @@ class _LoginState extends State<Login> {
                       textColor: Colors.white,
                       child: Text('Login'),
                       onPressed: () {
-                        if (customers.any(
+                        if (users.any(
                             (item) => item.username == nameController.text)) {
-                          Customer customer = customers.firstWhere(
+                          User user = users.firstWhere(
                               (item) => item.username == nameController.text);
-                          if (customer
+                          if (user
                               .passwordVerify(passwordController.text)) {
                             // Login App: openDialog(context, 'You're in! App gets started here with the current user')    
                             Navigator.of(context).push(MaterialPageRoute(
@@ -139,12 +139,12 @@ class _LoginState extends State<Login> {
                       onPressed: () {
                         Navigator.of(context)
                             .push(MaterialPageRoute(
-                                builder: (context) => Newcustomer()))
-                            .then((customer) {
-                          int id = customers[customers.length - 1].id + 1;
-                          http.makeCustomerPostRequest(customer);
-                          customer.id = id;
-                          customers.add(customer);
+                                builder: (context) => Newuser()))
+                            .then((user) {
+                          int id = users[users.length - 1].id + 1;
+                          http.makeUserPostRequest(user);
+                          user.id = id;
+                          users.add(user);
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MyHomePage()));
                         });

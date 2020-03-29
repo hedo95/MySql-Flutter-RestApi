@@ -72,3 +72,22 @@ router.delete('/:users/:id', (req,res) => {
 });
 
 module.exports = router;
+
+// [{
+// 	"id":1,
+//     "username": "Veterano23",
+//     "name": "Jesus",
+//     "lastname": "Hedo",
+//     "mail": "hedo.jesus@gmail.com",
+//     "randomstr": "dsDsfj=·",
+//     "hash": "sdfjioi93448rfj7"
+// },
+// {
+// 	"id":2,
+//     "username": "Xavito95",
+//     "name": "Xavi",
+//     "lastname": "Castro",
+//     "mail": "xc@gmail.com",
+//     "randomstr": "gHf08vf^",
+//     "hash": "1sr6p5ly´c,wzh6/"
+// }]

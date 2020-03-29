@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/Pages/newcustomer.dart';
+import 'package:frontend/Pages/newuser.dart';
 import 'BO/BO.dart';
 import 'Pages/homepage.dart';
 import 'Pages/login.dart';
-import 'models/customer.dart';
+import 'models/user.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'models/http.dart';
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: Stream.fromFuture(http.getCustomers()),
+      stream: Stream.fromFuture(http.getUsers()),
       builder: (context, response) {
         if(!response.hasData){
           return Center(
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         } else {
           return MultiProvider(
             providers: [
-              Provider<List<Customer>>.value(value: response.data)
+              Provider<List<User>>.value(value: response.data)
             ],
             child: MaterialApp(
               title: 'Flutter Rest Api',
