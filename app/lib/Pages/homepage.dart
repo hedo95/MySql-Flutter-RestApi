@@ -16,7 +16,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<User> users = [];
   Http http = new Http();
-  int index;
+  //int index;
   Color leadingBackgroundColor;
   Color leadingNumberColor;
 
